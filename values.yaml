@@ -1,0 +1,60 @@
+namespace: default
+
+app:
+  name: hello-world
+  replicaCount: 1
+  image:
+    repository: localhost:30000/hello-world
+    tag: v-2
+    pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+
+configMap:
+  enabled: true
+  data:
+    config_key: "hello-world-config-value"
+    greeting_message: "Welcome to Hello World App"
+
+secrets:
+  enabled: true
+  data:
+    secret_key: "hello-world-secret-value"
+    api_token: "secure-api-token-value"
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: hello-world.local  # Use localhost or your node's IP for testing
+      paths:
+        - /hello # The path to your app (root in this case)
+  tls: [] 
+
+
+
+livenessProbe:
+  enabled: false
+  httpGet:
+    host: "hello-world.local"
+    path: "hello-world.local/healthz"
+    port: 80
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
+  periodSeconds: 5
+  failureThreshold: 3
+
+
+readinessProbe:
+  enabled: false
+  httpGet:
+    host: "hello-world.local"
+    path: "hello-world.local/healthz"
+    port: 80
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  periodSeconds: 5
+  failureThreshold: 3

@@ -1,0 +1,1 @@
+helm upgrade  hello-world C:\helm --values values.yaml 
